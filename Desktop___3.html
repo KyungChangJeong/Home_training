@@ -6,6 +6,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Desktop - 3</title>
 <style id="applicationStylesheet" type="text/css">
+	#start_button{
+		position: absolute;
+		top: 600px;
+		left: 1048px;
+		width: 158px;
+		height: 53px;
+		background: #81F7D8 0% 0% no-repeat padding-box;
+		border-radius: 12px;
+		text-align: center;
+		font: normal normal bold 22px/18px Noto Sans;
+		letter-spacing: 0px;
+		color: #FFFFFF;
+		text-shadow: 0px 3px 6px #00000029;
+		opacity: 1;
+	}
+
 	.mediaViewInfo {
 		--web-view-name: Desktop - 3;
 		--web-view-id: Desktop_-_3;
@@ -112,22 +128,31 @@
 	.Rectangle_2 {
 		filter: drop-shadow(4px 4px 16px rgba(0, 0, 0, 0.149));
 		position: absolute;
-		overflow: visible;
-		width: 993px;
+		overflow: hidden;
+		width: 600px;
 		height: 600px;
-		left: 43px;
-		top: 202px;
+		left: 150px;
+		top: 140px;
+	}
+	#canvas {
+		position: absolute;
+		overflow: visible;
+		width: 500px;
+		height: 500px;
+		left: 200px;
+		top: 190px;
+		z-index: 9999;
 	}
 	#Rectangle_6 {
 		fill: rgba(196,196,196,1);
 	}
 	.Rectangle_6 {
 		position: absolute;
-		overflow: visible;
-		width: 892px;
-		height: 502px;
-		left: 70px;
-		top: 227px;
+		overflow: hidden;
+		width: 500px;
+		height: 500px;
+		left: 200px;
+		top: 190px;
 	}
 	#__ {
 		left: 1022px;
@@ -3072,7 +3097,7 @@ window.application = new Application();
 	<img onclick="application.goToTargetView(event)" id="_4x_1" src="_4x_1.png" srcset="_4x_1.png 1x, _4x_1@2x.png 2x">
 		
 	<svg class="Rectangle_2">
-		<rect id="Rectangle_2" rx="0" ry="0" x="0" y="0" width="945" height="552">
+		<rect id="Rectangle_2" rx="0" ry="0" x="0" y="0" width="600" height="600">
 		</rect>
 	</svg>
 	<svg class="Rectangle_6">
@@ -3088,12 +3113,108 @@ window.application = new Application();
 	<div id="___t">
 		<span>한다</span>
 	</div>
+
+	<button id="start_button" type="button" onclick="init()">Start</button>
+	<div><canvas id="canvas" ></canvas></div>
+	<div id="label-container" style="color: white;"></div>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
+<script type="text/javascript">
+    // More API functions here:
+    // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/pose
+
+    // the link to your model provided by Teachable Machine export panel
+    const URL = "./squat/";
+    let model, webcam, ctx, labelContainer, maxPredictions;
+
+    async function init() {
+        const modelURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
+
+        // load the model and metadata
+        // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+        // Note: the pose library adds a tmPose object to your window (window.tmPose)
+        model = await tmPose.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
+
+        // Convenience function to setup a webcam
+        const size = 200;
+        const flip = true; // whether to flip the webcam
+        webcam = new tmPose.Webcam(500, 500, flip); // width, height, flip
+        await webcam.setup(); // request access to the webcam
+        await webcam.play();
+        window.requestAnimationFrame(loop);
+
+        // append/get elements to the DOM
+        const canvas = document.getElementById("canvas");
+		
+        canvas.width = 500; canvas.height = 500;
+        ctx = canvas.getContext("2d");
+        labelContainer = document.getElementById("label-container");
+        for (let i = 0; i < maxPredictions; i++) { // and class labels
+            labelContainer.appendChild(document.createElement("div"));
+        }
+    }
+
+    async function loop(timestamp) {
+        webcam.update(); // update the webcam frame
+        await predict();
+        window.requestAnimationFrame(loop);
+    }
+
+	var status = "stand"
+	var count = 0
+    async function predict() {
+        // Prediction #1: run input through posenet
+        // estimatePose can take in an image, video or canvas html element
+        const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
+        // Prediction 2: run input through teachable machine classification model
+        const prediction = await model.predict(posenetOutput);
+
+		if(prediction[0].probability.toFixed(2)>= 0.9 ){
+			if(status == "squat"){
+				count++
+			}
+			status = "stand"
+		}else if(prediction[1].probability.toFixed(2)>= 0.9) {
+			status = "squat"
+		}
+		else if(prediction[2].probability.toFixed(2)>= 0.9){
+			status = "bent"
+		}
+
+        for (let i = 0; i < maxPredictions; i++) {
+            const classPrediction =
+                prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+            labelContainer.childNodes[i].innerHTML = classPrediction;
+			
+        }
+
+        // finally draw the poses
+        drawPose(pose);
+    }
+
+	console.log("count :", count)
+    function drawPose(pose) {
+        if (webcam.canvas) {
+            ctx.drawImage(webcam.canvas, 0, 0);
+            // draw the keypoints and skeleton
+            if (pose) {
+                const minPartConfidence = 0.5;
+                tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
+                tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+            }
+        }
+    }
+</script>
 	<div onclick="application.goToTargetView(event)" id="___u">
 		<span>작업하기</span>
 	</div>
 	<div id="___v">
 		<span>운동하기</span>
 	</div>
+	
+
 </div>
 </body>
 </html>

@@ -3,7 +3,7 @@ var fs = require('fs');
 var app = http.createServer(function(request,response){
     var url = request.url;
     if(request.url == '/'){
-      url = '/Desktop___1.html';
+      url = '/index.html';
     }
     else if(request.url == '/Desktop___2.html'){
       url = '/Desktop___2.html';
