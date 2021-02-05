@@ -6,6 +6,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Desktop - 2</title>
 <style id="applicationStylesheet" type="text/css">
+
+	#start_button{
+		position: absolute;
+		top: 600px;
+		left: 1048px;
+		width: 158px;
+		height: 53px;
+		background: #81F7D8 0% 0% no-repeat padding-box;
+		border-radius: 12px;
+		text-align: center;
+		font: normal normal bold 22px/18px Noto Sans;
+		letter-spacing: 0px;
+		color: #FFFFFF;
+		text-shadow: 0px 3px 6px #00000029;
+		opacity: 1;
+	}
 	.mediaViewInfo {
 		--web-view-name: Desktop - 2;
 		--web-view-id: Desktop_-_2;
@@ -61,10 +77,10 @@
 		filter: drop-shadow(4px 4px 16px rgba(0, 0, 0, 0.149));
 		position: absolute;
 		overflow: hidden;
-		width: 993px;
+		width: 600px;
 		height: 600px;
-		left: 43px;
-		top: 202px;
+		left: 150px;
+		top: 140px;
 	}
 	#work {
 		position: absolute;
@@ -152,24 +168,22 @@
 		--web-action-target: index.html;
 		cursor: pointer;
 	}
-	.canvas {
-
+	#canvas {
 		position: absolute;
 		overflow: visible;
-		padding-left: 200px;
-		padding-top: 500px;
-		width: 993px;
-		height: 600px;
-		left: 100px;
-		top: 202px;
+		width: 500px;
+		height: 500px;
+		left: 200px;
+		top: 190px;
+		z-index: 9999;
 	}
 	.Rectangle_6 {
 		position: absolute;
 		overflow: hidden;
-		width: 892px;
-		height: 502px;
-		left: 70px;
-		top: 227px;
+		width: 500px;
+		height: 500px;
+		left: 200px;
+		top: 190px;
 	}
 	#___t {
 		left: 267px;
@@ -3053,10 +3067,10 @@ window.application = new Application();
 		<path id="Rectangle_1_j" d="M 0 0 L 1440 0 L 1440 71 L 0 71 L 0 0 Z">
 		</path>
 	</svg>
-	<!-- <svg class="Rectangle_2">
-		<rect id="Rectangle_2" rx="0" ry="0" x="0" y="0" width="945" height="552">
+	<svg class="Rectangle_2">
+		<rect id="Rectangle_2" rx="0" ry="0" x="0" y="0" width="600" height="600">
 		</rect>
-	</svg> -->
+	</svg>
 	<div id="work">
 		<svg class="Vector" viewBox="0 0 81 81">
 			<path id="Vector" d="M 0 0 L 81 0 L 81 81 L 0 81 L 0 0 Z">
@@ -3078,16 +3092,17 @@ window.application = new Application();
 	<div id="___q">
 		<span>한다</span>
 	</div>
-
-	
+	<button id="start_button" type="button" onclick="init()">Start</button>
+	<div><canvas id="canvas" ></canvas></div>
+	<div id="label-container" style="color: white;"></div>
 
 	<img onclick="application.goToTargetView(event)" id="_4x_1" src="_4x_1.png" srcset="_4x_1.png 1x, _4x_1@2x.png 2x">
-	<button type="button" onclick="init()">Start</button>
-	<br><br><br><br><br><br><br><br><br>	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;
+	
+	
 
 	
-	<div><canvas id="canvas" ></canvas></div>
-<div id="label-container"></div>
+	
+
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
 <script type="text/javascript">
@@ -3111,7 +3126,7 @@ window.application = new Application();
         // Convenience function to setup a webcam
         const size = 200;
         const flip = true; // whether to flip the webcam
-        webcam = new tmPose.Webcam(400, 400, flip); // width, height, flip
+        webcam = new tmPose.Webcam(500, 500, flip); // width, height, flip
         await webcam.setup(); // request access to the webcam
         await webcam.play();
         window.requestAnimationFrame(loop);
@@ -3119,7 +3134,7 @@ window.application = new Application();
         // append/get elements to the DOM
         const canvas = document.getElementById("canvas");
 		
-        canvas.width = 400; canvas.height = 400;
+        canvas.width = 500; canvas.height = 500;
         ctx = canvas.getContext("2d");
         labelContainer = document.getElementById("label-container");
         for (let i = 0; i < maxPredictions; i++) { // and class labels
@@ -3179,10 +3194,10 @@ window.application = new Application();
     }
 </script>
 
-	<!-- <svg class="Rectangle_6">
-		<rect id="Rectangle_6" rx="0" ry="0" x="0" y="0" width="892" height="502">
+	<svg class="Rectangle_6">
+		<rect id="Rectangle_6" rx="0" ry="0" x="0" y="0" width="500" height="500">
 		</rect>
-	</svg> -->
+	</svg>
 	<div id="___t">
 		<span>작업하기</span>
 	</div>
