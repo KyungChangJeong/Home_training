@@ -3,6 +3,9 @@
 
 ### ```홈 라이프```를 위한, ```홈 트레이닝```을 위한 웹 개발
 
+웹 배포 사이트
+```https://601dedf7016eb7954200b0a6--inspiring-swartz-0e49ca.netlify.app/```
+
 # TECHNOLOGY
 ### 💻[python] 기술적인 부분
 - ```mediapipe```라이브러리 사용한 모션 인식
